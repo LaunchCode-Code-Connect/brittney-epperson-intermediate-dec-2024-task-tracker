@@ -13,6 +13,10 @@ import lombok.Setter;
 public class User extends AbstractEntity {
 
     @NotNull
+    @Column(name = "username")
+    private String username;
+
+    @NotNull
     @Column(unique = true)
     private String email;
 
@@ -24,7 +28,8 @@ public class User extends AbstractEntity {
     public User() {
     }
 
-    public User(String password, String email) {
+    public User(String username, String password, String email) {
+        this.username = username;
         this.password = password;
         this.email = email;
     }
