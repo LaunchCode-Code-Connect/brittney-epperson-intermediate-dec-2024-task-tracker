@@ -15,6 +15,4 @@ public class RegisterFormDTO extends LoginFormDTO {
     @Size(min = 2, max = 40, message = "Invalid username. Must be between 2 and 40 characters.")
     private String username;
 
-    private String verifyPassword;
-
 }
