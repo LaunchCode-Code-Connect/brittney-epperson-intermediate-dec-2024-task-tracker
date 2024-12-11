@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
+import { fetchClient } from '../utils/fetchClient';
 
 export default function Page() {
 	const [formData, setFormData] = useState({
@@ -21,25 +22,20 @@ export default function Page() {
 		setLoading(true);
 
 		try {
-			const response = await fetch('http://localhost:8080/api/login', {
+			const data = await fetchClient('/login', {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
 				body: JSON.stringify(formData),
 			});
-			if (!response.ok) {
-				const errorData = await response.json();
-				setResponseMessage(`Error: ${errorData.message}`);
-				setLoading(false);
-				return;
-			}
-			const data = await response.json();
-            const token = data.token;
-            localStorage.setItem('token', data.token);
-            const decodedToken = jwtDecode(token);
-            const username = decodedToken.sub;
-			setResponseMessage(`Login successful! Welcome, ${username || 'User'}!`);
+
+			const token = data.token;
+			localStorage.setItem('token', token);
+
+			const decodedToken = jwtDecode(token);
+			const username = decodedToken.sub;
+
+			setResponseMessage(
+				`Login successful! Welcome, ${username || 'User'}!`
+			);
 		} catch (error) {
 			setResponseMessage('An error occurred: ' + error.message);
 		} finally {
