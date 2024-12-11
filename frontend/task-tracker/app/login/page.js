@@ -1,4 +1,51 @@
+'use client';
+
+import { useState } from 'react';
+import { jwtDecode } from 'jwt-decode';
+
 export default function Page() {
+	const [formData, setFormData] = useState({
+		email: '',
+		password: '',
+	});
+	const [responseMessage, setResponseMessage] = useState('');
+	const [loading, setLoading] = useState(false);
+
+	const handleChange = (e) => {
+		const { name, value } = e.target;
+		setFormData({ ...formData, [name]: value });
+	};
+
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+		setLoading(true);
+
+		try {
+			const response = await fetch('http://localhost:8080/api/login', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(formData),
+			});
+			if (!response.ok) {
+				const errorData = await response.json();
+				setResponseMessage(`Error: ${errorData.message}`);
+				setLoading(false);
+				return;
+			}
+			const data = await response.json();
+            const token = data.token;
+            const decodedToken = jwtDecode(token);
+            const username = decodedToken.sub;
+			setResponseMessage(`Login successful! Welcome, ${username || 'User'}!`);
+		} catch (error) {
+			setResponseMessage('An error occurred: ' + error.message);
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	return (
 		<div>
 			<section className='bg-gray-50 dark:bg-gray-900'>
@@ -21,7 +68,7 @@ export default function Page() {
 							</h1>
 							<form
 								className='space-y-4 md:space-y-6'
-								action='#'
+								onSubmit={handleSubmit}
 							>
 								<div>
 									<label
@@ -37,6 +84,8 @@ export default function Page() {
 										className='bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
 										placeholder='name@company.com'
 										required=''
+										value={formData.email}
+										onChange={handleChange}
 									/>
 								</div>
 								<div>
@@ -53,6 +102,8 @@ export default function Page() {
 										placeholder='••••••••'
 										className='bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
 										required=''
+										value={formData.password}
+										onChange={handleChange}
 									/>
 								</div>
 								<div className='flex items-center justify-between'>
@@ -86,7 +137,7 @@ export default function Page() {
 									type='submit'
 									className='w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
 								>
-									Sign in
+									{loading ? 'Submitting...' : 'Sign In'}
 								</button>
 								<p className='text-sm font-light text-gray-500 dark:text-gray-400'>
 									Don’t have an account yet?{' '}
@@ -98,6 +149,7 @@ export default function Page() {
 									</a>
 								</p>
 							</form>
+							{responseMessage && <p>{responseMessage}</p>}
 						</div>
 					</div>
 				</div>
