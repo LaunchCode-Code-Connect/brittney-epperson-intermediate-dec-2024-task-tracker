@@ -36,6 +36,7 @@ export default function Page() {
 			}
 			const data = await response.json();
             const token = data.token;
+            localStorage.setItem('token', data.token);
             const decodedToken = jwtDecode(token);
             const username = decodedToken.sub;
 			setResponseMessage(`Login successful! Welcome, ${username || 'User'}!`);
