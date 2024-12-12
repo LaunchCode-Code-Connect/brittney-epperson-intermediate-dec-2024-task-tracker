@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { jwtDecode } from 'jwt-decode';
-import { fetchClient } from '../utils/fetchClient';
+import { useAuth } from '../context/AuthContext';
 
 export default function Page() {
 	const [formData, setFormData] = useState({
@@ -11,6 +10,7 @@ export default function Page() {
 	});
 	const [responseMessage, setResponseMessage] = useState('');
 	const [loading, setLoading] = useState(false);
+    const { login, error} = useAuth();
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -22,20 +22,13 @@ export default function Page() {
 		setLoading(true);
 
 		try {
-			const data = await fetchClient('/login', {
-				method: 'POST',
-				body: JSON.stringify(formData),
-			});
+			const result = await login(formData.email, formData.password);
 
-			const token = data.token;
-			localStorage.setItem('token', token);
-
-			const decodedToken = jwtDecode(token);
-			const username = decodedToken.sub;
-
-			setResponseMessage(
-				`Login successful! Welcome, ${username || 'User'}!`
-			);
+			if (result.success) {
+                setResponseMessage(
+                    `Login successful! Welcome, ${result.username || 'User'}!`
+                );
+            }
 		} catch (error) {
 			setResponseMessage('An error occurred: ' + error.message);
 		} finally {
@@ -68,6 +61,7 @@ export default function Page() {
 								onSubmit={handleSubmit}
 							>
 								<div>
+									{error && <p>{error}</p>}
 									<label
 										htmlFor='email'
 										className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
