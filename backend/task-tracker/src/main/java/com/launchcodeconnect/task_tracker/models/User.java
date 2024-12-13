@@ -2,6 +2,7 @@ package com.launchcodeconnect.task_tracker.models;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -19,9 +20,11 @@ public class User extends AbstractEntity implements UserDetails {
 
     @NotNull
     @Column(name = "username")
+    @Size(min = 2, max = 40, message = "Username must be between 2 and 40 characters")
     private String username;
 
     @NotNull
+    @Email
     @Column(unique = true)
     private String email;
 
