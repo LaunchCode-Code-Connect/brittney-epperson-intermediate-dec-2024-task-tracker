@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -24,7 +25,7 @@ public class User extends AbstractEntity implements UserDetails {
     private String username;
 
     @NotNull
-    @Email
+    @Email(message = "Email format not valid")
     @Column(unique = true)
     private String email;
 
@@ -32,6 +33,12 @@ public class User extends AbstractEntity implements UserDetails {
     @Size(min = 4, message = "Password must be at least 4 characters")
     @Column(name = "password")
     private String password;
+
+    @Column(name = "enabled")
+    private boolean enabled = false;
+
+    @Column(name = "verification_token")
+    private String verificationToken;
 
     public User() {
     }
@@ -73,6 +80,14 @@ public class User extends AbstractEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
+    }
+
+    public void generateVerificationToken() {
+        this.verificationToken = UUID.randomUUID().toString();
+    }
+
+    public boolean verifyToken(String token) {
+        return this.verificationToken != null && this.verificationToken.equals(token);
     }
 }
