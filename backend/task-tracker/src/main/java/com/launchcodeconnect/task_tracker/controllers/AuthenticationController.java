@@ -43,4 +43,12 @@ public class AuthenticationController {
         return ResponseEntity.ok(loginResponse);
     }
 
+    @PostMapping("/verify-email")
+    public ResponseEntity<String> verifyEmail(@RequestParam String token) {
+        boolean verified = authenticationService.verifyEmail(token);
+        return verified
+                ? ResponseEntity.ok("Email successfully verified")
+                : ResponseEntity.badRequest().body("Invalid verification token");
+    }
+
 }
