@@ -1,5 +1,12 @@
 const baseURL = 'http://localhost:8080/api';
 
+// List of public endpoints that don't need authorization
+const publicEndpoints = [
+  '/login',
+  '/register',
+  '/verify-email'
+];
+
 export const fetchClient = async (endpoint, options = {}) => {
 	const url = new URL(`${baseURL}${endpoint}`, window.location.origin);
 
@@ -13,6 +20,14 @@ export const fetchClient = async (endpoint, options = {}) => {
 		'Content-Type': 'application/json',
 		...options.headers,
 	};
+
+	// Add Authorization header if endpoint is not public
+	if (!publicEndpoints.includes(endpoint)) {
+		const token = localStorage.getItem('token');
+		if (token) {
+			headers['Authorization'] = `Bearer ${token}`;
+		}
+	}
 
 	const config = {
 		method: options.method || 'GET',
@@ -38,6 +53,13 @@ export const fetchClient = async (endpoint, options = {}) => {
 		}
 
 		if (!response.ok) {
+			// Handle 401 Unauthorized responses
+			if (response.status === 401) {
+				// Clear token from localStorage if it's invalid/expired
+				localStorage.removeItem('token');
+				// Optionally redirect to login page
+				window.location.href = '/login';
+			}
 			throw new Error(data.message || data || 'Something went wrong');
 		}
 
