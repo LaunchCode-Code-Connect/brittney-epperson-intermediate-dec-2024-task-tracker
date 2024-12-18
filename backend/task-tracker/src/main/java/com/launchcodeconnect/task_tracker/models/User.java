@@ -90,4 +90,13 @@ public class User extends AbstractEntity implements UserDetails {
     public boolean verifyToken(String token) {
         return this.verificationToken != null && this.verificationToken.equals(token);
     }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    public String getDisplayName() {
+        return username;
+    }
 }
