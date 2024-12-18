@@ -33,6 +33,7 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Add this line
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/login", "/api/register", "/api/verify-email", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
@@ -51,14 +52,20 @@ public class SecurityConfiguration {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(List.of("http://localhost:3000"));
-        configuration.setAllowedMethods(List.of("GET","POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization","*"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Access-Control-Allow-Origin", "Access-Control-Allow-Methods", "Access-Control-Allow-Headers"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList(
+                "Authorization",
+                "Content-Type",
+                "Access-Control-Allow-Origin",
+                "Access-Control-Allow-Methods",
+                "Access-Control-Allow-Headers"
+        ));
+        configuration.setExposedHeaders(Arrays.asList("Authorization"));
         configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-
-        source.registerCorsConfiguration("/**",configuration);
+        source.registerCorsConfiguration("/**", configuration);
 
         return source;
     }
