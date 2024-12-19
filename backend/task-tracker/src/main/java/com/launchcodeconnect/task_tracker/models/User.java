@@ -10,6 +10,7 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -39,6 +40,12 @@ public class User extends AbstractEntity implements UserDetails {
 
     @Column(name = "verification_token")
     private String verificationToken;
+
+    @Column(name = "reset_token", unique = true)
+    private String resetToken;
+
+    @Column(name = "token_expiration")
+    private LocalDateTime tokenExpiration;
 
     public User() {
     }
@@ -99,4 +106,20 @@ public class User extends AbstractEntity implements UserDetails {
     public String getDisplayName() {
         return username;
     }
+
+    public void generateResetToken() {
+        this.resetToken = UUID.randomUUID().toString();
+        this.tokenExpiration = LocalDateTime.now().plusDays(1); //Token valid for 1 day
+    }
+
+    public boolean isResetTokenValid(String token) {
+        return this.resetToken != null && this.resetToken.equals(token) &&
+                this.tokenExpiration != null && this.tokenExpiration.isAfter(LocalDateTime.now());
+    }
+
+    public void clearResetToken() {
+        this.resetToken = null;
+        this.tokenExpiration = null;
+    }
+
 }
