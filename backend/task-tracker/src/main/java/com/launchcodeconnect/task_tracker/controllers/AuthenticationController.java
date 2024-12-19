@@ -4,6 +4,7 @@ import com.launchcodeconnect.task_tracker.models.User;
 import com.launchcodeconnect.task_tracker.models.dto.LoginFormDTO;
 import com.launchcodeconnect.task_tracker.models.dto.LoginResponse;
 import com.launchcodeconnect.task_tracker.models.dto.RegisterFormDTO;
+import com.launchcodeconnect.task_tracker.models.dto.ResetPasswordDTO;
 import com.launchcodeconnect.task_tracker.service.AuthenticationService;
 import com.launchcodeconnect.task_tracker.service.JwtService;
 import com.launchcodeconnect.task_tracker.service.UserService;
@@ -69,7 +70,10 @@ public class AuthenticationController {
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestParam String newPassword) {
+    public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordDTO resetPasswordDTO) {
+        String token = resetPasswordDTO.getToken();
+        String newPassword = resetPasswordDTO.getNewPassword();
+
         userService.resetPassword(token, newPassword);
         return ResponseEntity.ok("Password has been successfully reset.");
     }
