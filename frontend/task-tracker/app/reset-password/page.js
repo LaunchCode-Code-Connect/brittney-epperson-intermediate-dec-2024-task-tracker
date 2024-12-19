@@ -30,9 +30,6 @@ export default function ResetPassword() {
 		try {
 			const response = await fetchClient('/api/reset-password', {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
 				body: JSON.stringify({ email, newPassword: password, token }),
 			});
 
