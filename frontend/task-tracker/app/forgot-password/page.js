@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react';
-import { fetchClient } from '@/app/utils/fetchClient';
+import { fetchClient } from '../utils/fetchClient';
 
 const ForgotPassword = () => {
 	const [email, setEmail] = useState('');
