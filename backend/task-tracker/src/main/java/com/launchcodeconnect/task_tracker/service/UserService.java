@@ -2,19 +2,29 @@ package com.launchcodeconnect.task_tracker.service;
 
 import com.launchcodeconnect.task_tracker.data.UserRepository;
 import com.launchcodeconnect.task_tracker.models.User;
+import com.launchcodeconnect.task_tracker.models.dto.LoginFormDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UserService implements UserDetailsService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    public UserService(UserRepository userRepository,
+                       PasswordEncoder passwordEncoder,
+                       EmailService emailService) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -26,6 +36,7 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
         user.generateResetToken();
         userRepository.save(user);
+        emailService.sendPasswordResetEmail(user);
     }
 
     public void resetPassword(String token, String newPassword) {
@@ -38,5 +49,4 @@ public class UserService implements UserDetailsService {
         user.clearResetToken();
         userRepository.save(user);
     }
-
 }
