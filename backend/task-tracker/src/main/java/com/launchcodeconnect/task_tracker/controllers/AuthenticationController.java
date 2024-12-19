@@ -6,6 +6,8 @@ import com.launchcodeconnect.task_tracker.models.dto.LoginResponse;
 import com.launchcodeconnect.task_tracker.models.dto.RegisterFormDTO;
 import com.launchcodeconnect.task_tracker.service.AuthenticationService;
 import com.launchcodeconnect.task_tracker.service.JwtService;
+import com.launchcodeconnect.task_tracker.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +19,9 @@ public class AuthenticationController {
     private final JwtService jwtService;
 
     private final AuthenticationService authenticationService;
+
+    @Autowired
+    private UserService userService;
 
     public AuthenticationController(JwtService jwtService, AuthenticationService authenticationService) {
         this.jwtService = jwtService;
@@ -54,6 +59,19 @@ public class AuthenticationController {
         return verified
                 ? ResponseEntity.ok("Email successfully verified")
                 : ResponseEntity.badRequest().body("Invalid verification token");
+    }
+
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestBody String email) {
+        userService.generateResetToken(email);
+        return ResponseEntity.ok("Password reset link sent to your email.");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestParam String newPassword) {
+        userService.resetPassword(token, newPassword);
+        return ResponseEntity.ok("Password has been successfully reset.");
     }
 
 }
