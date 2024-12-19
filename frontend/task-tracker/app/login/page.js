@@ -118,7 +118,7 @@ export default function Page() {
 										</div>
 									</div>
 									<a
-										href='#'
+										href='/forgot-password'
 										className='text-sm font-medium text-primary-600 hover:underline dark:text-primary-500'
 									>
 										Forgot password?
