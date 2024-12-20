@@ -7,6 +7,8 @@ export default function Users() {
 	const [users, setUsers] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
+	const [showModal, setShowModal] = useState(false);
+	const [userToDelete, setUserToDelete] = useState(null);
 
 	useEffect(() => {
 		loadUsers();
@@ -23,6 +25,32 @@ export default function Users() {
 		} finally {
 			setLoading(false);
 		}
+	};
+
+	const handleDeleteUser = (userId) => {
+		setUserToDelete(userId);
+		setShowModal(true);
+	};
+
+	const confirmDelete = async () => {
+		setShowModal(false);
+		if (!userToDelete) return;
+
+		try {
+			const response = await fetchClient(`/users/${userToDelete}`, {
+				method: 'DELETE',
+			});
+		} catch (error) {
+			alert('Error deleting user:', error);
+		} finally {
+			setUserToDelete(null); // Reset user to delete
+			loadUsers();
+		}
+	};
+
+	const cancelDelete = () => {
+		setShowModal(false);
+		setUserToDelete(null);
 	};
 
 	if (loading) {
@@ -45,12 +73,19 @@ export default function Users() {
 
 	return (
 		<div className='p-10'>
-            <h2 className='pb-10 text-4xl font-bold text-center text-gray-900 dark:text-white'>
-                Users </h2>
+			<h2 className='pb-10 text-4xl font-bold text-center text-gray-900 dark:text-white'>
+				Users{' '}
+			</h2>
 			<div className='relative overflow-x-auto shadow-md sm:rounded-lg'>
 				<table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400'>
 					<thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
 						<tr>
+							<th
+								scope='col'
+								className='px-6 py-3'
+							>
+								ID
+							</th>
 							<th
 								scope='col'
 								className='px-6 py-3'
@@ -93,6 +128,7 @@ export default function Users() {
 									key={user.id}
 									className='bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'
 								>
+									<td className='px-6 py-4'>{user.id}</td>
 									<th
 										scope='row'
 										className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'
@@ -114,12 +150,22 @@ export default function Users() {
 										</span>
 									</td>
 									<td className='px-6 py-4'>
-										<a
-											href='#'
-											className='font-medium text-blue-600 dark:text-blue-500 hover:underline'
-										>
-											Edit
-										</a>
+										<div className='flex space-x-2'>
+											<a
+												href='#'
+												className='font-medium text-blue-600 dark:text-blue-500 hover:underline'
+											>
+												Edit
+											</a>
+											<button
+												onClick={() =>
+													handleDeleteUser(user.id)
+												}
+												className='font-medium text-red-600 dark:text-red-500 hover:underline'
+											>
+												Delete
+											</button>
+										</div>
 									</td>
 								</tr>
 							))
@@ -172,6 +218,30 @@ export default function Users() {
 					</nav>
 				)}
 			</div>
+			{/* Delete Confirmation Modal */}
+			{showModal && (
+				<div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'>
+					<div className='bg-white dark:bg-gray-800 p-6 rounded-lg'>
+						<h2 className='text-lg font-medium text-gray-900 dark:text-gray-100'>
+							Are you sure you want to delete this user?
+						</h2>
+						<div className='mt-4 flex justify-end space-x-2'>
+							<button
+								onClick={cancelDelete}
+								className='px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-400 dark:hover:bg-gray-500'
+							>
+								Cancel
+							</button>
+							<button
+								onClick={confirmDelete}
+								className='px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600'
+							>
+								Delete
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 }
