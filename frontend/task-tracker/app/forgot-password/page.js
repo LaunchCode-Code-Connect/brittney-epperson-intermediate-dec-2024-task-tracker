@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { useState } from 'react';
 import { fetchClient } from '../utils/fetchClient';
@@ -22,25 +22,17 @@ const ForgotPassword = () => {
 				},
 			});
 
-			const responseBody = await response.text();
-			console.log('Response status:', response.status);
-			console.log('Response body:', responseBody);
-
-			if (response.ok) {
+			if (response.success) {
 				setResponseMessage(
 					'Password reset link has been sent to your email.'
 				);
-			} else {
-				setResponseMessage(
-					'Error sending reset link. Please try again.'
-				);
 			}
 		} catch (error) {
-			console.error('Error:', error);
 			setResponseMessage('Error sending reset link. Please try again.');
+		} finally {
+			setLoading(false);
 		}
 
-		setLoading(false);
 	};
 
 	return (
