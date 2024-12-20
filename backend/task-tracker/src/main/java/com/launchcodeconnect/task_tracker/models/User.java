@@ -2,6 +2,8 @@ package com.launchcodeconnect.task_tracker.models;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -35,6 +37,15 @@ public class User extends AbstractEntity implements UserDetails {
     @Column(name = "password")
     private String password;
 
+    public User() {
+    }
+
+    public User(String username, String email, String password) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+    }
+
     @Column(name = "enabled")
     private boolean enabled = false;
 
@@ -47,14 +58,17 @@ public class User extends AbstractEntity implements UserDetails {
     @Column(name = "token_expiration")
     private LocalDateTime tokenExpiration;
 
-    public User() {
-    }
+    @OneToMany(mappedBy = "assignee")
+    private List<Task> tasks;
 
-    public User(String username, String password, String email) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-    }
+    @ManyToMany
+    private List<Team> teams;
+
+    @OneToMany(mappedBy = "user")
+    private List<Comment> comments;
+
+    @OneToMany(mappedBy = "user")
+    private List<Notification> notifications;
 
     public boolean isMatchingPassword(String password) {
         return password.matches(getPassword());
@@ -63,7 +77,6 @@ public class User extends AbstractEntity implements UserDetails {
     public boolean isPasswordEmpty() {
         return getPassword() == null || getPassword().isEmpty();
     }
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
