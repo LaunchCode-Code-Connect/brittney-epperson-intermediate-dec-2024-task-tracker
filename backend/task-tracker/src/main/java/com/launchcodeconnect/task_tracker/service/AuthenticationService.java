@@ -32,8 +32,8 @@ public class AuthenticationService {
 
     public User signup(RegisterFormDTO input) {
         User user = new User(input.getUsername(),
-                passwordEncoder.encode(input.getPassword()),
-                input.getEmail());
+                input.getEmail(), passwordEncoder.encode(input.getPassword())
+        );
 
         user.generateVerificationToken();
         User savedUser = userRepository.save(user);
