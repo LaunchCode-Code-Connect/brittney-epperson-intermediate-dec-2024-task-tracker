@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { fetchClient } from '../utils/fetchClient';
+import { useRouter } from 'next/navigation';
 
 export default function Users() {
+	const router = useRouter();
 	const [users, setUsers] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
@@ -27,6 +29,10 @@ export default function Users() {
 		}
 	};
 
+	const handleEditUser = (userId) => {
+        router.push(`/users/${userId}`);
+    };
+
 	const handleDeleteUser = (userId) => {
 		setUserToDelete(userId);
 		setShowModal(true);
@@ -43,7 +49,7 @@ export default function Users() {
 		} catch (error) {
 			alert('Error deleting user:', error);
 		} finally {
-			setUserToDelete(null); // Reset user to delete
+			setUserToDelete(null);
 			loadUsers();
 		}
 	};
@@ -151,12 +157,12 @@ export default function Users() {
 									</td>
 									<td className='px-6 py-4'>
 										<div className='flex space-x-2'>
-											<a
-												href='#'
+											<button
+												onClick={() => handleEditUser(user.id)}
 												className='font-medium text-blue-600 dark:text-blue-500 hover:underline'
 											>
 												Edit
-											</a>
+											</button>
 											<button
 												onClick={() =>
 													handleDeleteUser(user.id)
