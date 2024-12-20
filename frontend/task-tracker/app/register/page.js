@@ -3,7 +3,7 @@
 import { useState } from'react';
 import { fetchClient } from '../utils/fetchClient';
 
-export default function Page() {
+export default function RegisterPage() {
 
     const [formData, setFormData] = useState({
         username: '',
