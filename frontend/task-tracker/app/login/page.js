@@ -26,7 +26,7 @@ export default function Page() {
 
 			if (result.success) {
                 setResponseMessage(
-                    `Login successful! Welcome, ${result.displayName || 'User'}!`
+                    `Login successful! Welcome, ${result.username || 'User'}!`
                 );
             }
 		} catch (error) {

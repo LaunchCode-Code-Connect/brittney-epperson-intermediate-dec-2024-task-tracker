@@ -98,15 +98,6 @@ public class User extends AbstractEntity implements UserDetails {
         return this.verificationToken != null && this.verificationToken.equals(token);
     }
 
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
-    public String getDisplayName() {
-        return username;
-    }
-
     public void generateResetToken() {
         this.resetToken = UUID.randomUUID().toString();
         this.tokenExpiration = LocalDateTime.now().plusDays(1); //Token valid for 1 day
