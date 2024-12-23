@@ -3,6 +3,7 @@ package com.launchcodeconnect.task_tracker.controllers;
 
 import com.launchcodeconnect.task_tracker.data.UserRepository;
 import com.launchcodeconnect.task_tracker.models.User;
+import com.launchcodeconnect.task_tracker.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,9 +25,12 @@ public class UserController {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    private UserService userService;
+
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userRepository.findAll();
+        List<User> users = userService.getAllUsersWithTeams();
         return ResponseEntity.ok(users);
     }
 
@@ -66,10 +70,12 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteUser(@PathVariable("id") int id) {
-        userRepository.deleteById(id);
-
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<Void> deleteUser(@PathVariable("id") int id) {
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id);
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 
 }

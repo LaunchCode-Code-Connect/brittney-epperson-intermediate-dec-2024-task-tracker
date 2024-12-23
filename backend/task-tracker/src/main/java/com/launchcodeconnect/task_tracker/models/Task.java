@@ -1,9 +1,8 @@
 package com.launchcodeconnect.task_tracker.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -33,8 +32,9 @@ public class Task extends AbstractEntity{
         this.completed = completed;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User assignee;
 
     @ManyToOne
@@ -42,9 +42,11 @@ public class Task extends AbstractEntity{
     private Team team;
 
     @OneToMany(mappedBy = "task")
+    @JsonIgnore
     private List<Comment> comments;
 
     @OneToMany(mappedBy = "task")
+    @JsonIgnore
     private List<Notification> notifications;
 
 }

@@ -1,5 +1,7 @@
 package com.launchcodeconnect.task_tracker.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
@@ -18,12 +20,15 @@ public class Team extends AbstractEntity{
     private String description;
 
     @ManyToMany(mappedBy = "teams")
+    @JsonBackReference
     private List<User> users;
 
     @OneToMany(mappedBy = "team")
+    @JsonIgnore
     private List<Task> tasks;
 
     @OneToMany(mappedBy = "team")
+    @JsonIgnore
     private List<Notification> notifications;
 
     public Team() {
