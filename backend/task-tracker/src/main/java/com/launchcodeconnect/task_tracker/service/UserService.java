@@ -9,6 +9,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -50,5 +53,14 @@ public class UserService implements UserDetailsService {
         user.setPassword(passwordEncoder.encode(newPassword));
         user.clearResetToken();
         userRepository.save(user);
+    }
+
+    @Transactional
+    public List<User> getAllUsersWithTeams() {
+        List<User> users = userRepository.findAll();
+        for (User user : users) {
+            user.getTeams().size(); // Initialize the teams collection
+        }
+        return users;
     }
 }
