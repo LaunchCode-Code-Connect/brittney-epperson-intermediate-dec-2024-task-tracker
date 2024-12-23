@@ -7,6 +7,7 @@ import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -18,14 +19,17 @@ public class Task extends AbstractEntity{
 
     private String description;
 
+    private Date dueDate;
+
     private boolean completed;
 
     public Task() {
     }
 
-    public Task(String title, String description, boolean completed) {
+    public Task(String title, String description, Date dueDate, boolean completed) {
         this.title = title;
         this.description = description;
+        this.dueDate = dueDate;
         this.completed = completed;
     }
 
