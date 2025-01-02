@@ -1,7 +1,11 @@
 package com.launchcodeconnect.task_tracker.controllers;
 
 
+import com.launchcodeconnect.task_tracker.data.NotificationRepository;
+import com.launchcodeconnect.task_tracker.data.TaskRepository;
 import com.launchcodeconnect.task_tracker.data.UserRepository;
+import com.launchcodeconnect.task_tracker.models.Notification;
+import com.launchcodeconnect.task_tracker.models.Task;
 import com.launchcodeconnect.task_tracker.models.User;
 import com.launchcodeconnect.task_tracker.service.UserService;
 import jakarta.validation.Valid;
@@ -23,6 +27,12 @@ public class UserController {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    TaskRepository taskRepository;
+
+    @Autowired
+    NotificationRepository notificationRepository;
 
     @Autowired
     private UserService userService;
@@ -75,6 +85,20 @@ public class UserController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    //Fetch tasks for specific user
+    @GetMapping("/{id}/tasks")
+    public ResponseEntity<List<Task>> getUserTasks(@PathVariable("id") int id) {
+        List<Task> tasks = taskRepository.findAllByAssigneeId(id);
+        return ResponseEntity.ok(tasks);
+    }
+
+    //Fetch notifications for specific user
+    @GetMapping("/{id}/notifications")
+    public ResponseEntity<List<Notification>> getUserNotifications(@PathVariable("id") int id) {
+        List<Notification> notifications = notificationRepository.findByUserId(id);
+        return ResponseEntity.ok(notifications);
     }
 
 }
