@@ -6,7 +6,6 @@ import com.launchcodeconnect.task_tracker.models.User;
 import com.launchcodeconnect.task_tracker.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
