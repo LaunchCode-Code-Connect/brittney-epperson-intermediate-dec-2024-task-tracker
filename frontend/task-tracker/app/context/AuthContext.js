@@ -18,17 +18,24 @@ export const AuthProvider = ({ children }) => {
         const token = localStorage.getItem('token');
         if (token) {
             try {
-                const decodedToken = jwtDecode(token);
-                const username = decodedToken.sub;
-                if (username) {
-                    setUser({ username });
-                } else { 
-                    setUser(null);
-                }
-            } catch (error) {
-                console.error('Error verifying token', error);
-                setUser(null);
-            }
+				const decodedToken = jwtDecode(token);
+				console.log('Decoded token:', decodedToken);
+				const { sub: email, userId, username } = decodedToken;
+				if (email && userId && username) {
+					console.log('User authenticated:', {
+						username,
+						id: userId,
+						email,
+					});
+					setUser({ username, id: userId, email });
+				} else {
+					console.log('Invalid token data');
+					setUser(null);
+				}
+			} catch (error) {
+				console.error('Error verifying token', error);
+				setUser(null);
+			}
         } else {
             setUser(null);
         }
