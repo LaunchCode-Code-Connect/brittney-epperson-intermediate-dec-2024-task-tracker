@@ -10,7 +10,7 @@ export default function Page() {
 	});
 	const [responseMessage, setResponseMessage] = useState('');
 	const [loading, setLoading] = useState(false);
-    const { login, error} = useAuth();
+    const { user, login, error} = useAuth();
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -26,7 +26,7 @@ export default function Page() {
 
 			if (result.success) {
                 setResponseMessage(
-                    `Login successful! Welcome, ${result.username || 'User'}!`
+                    `Login successful! Welcome, ${user.username || 'User'}!`
                 );
             }
 		} catch (error) {

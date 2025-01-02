@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
 						id: userId,
 						email,
 					});
-					setUser({ username, id: userId, email });
+					setUser({ username: username, id: userId, email: email });
 				} else {
 					console.log('Invalid token data');
 					setUser(null);
