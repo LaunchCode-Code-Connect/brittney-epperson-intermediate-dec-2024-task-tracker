@@ -1,8 +1,12 @@
 package com.launchcodeconnect.task_tracker.controllers;
 
 import com.launchcodeconnect.task_tracker.data.TaskRepository;
+import com.launchcodeconnect.task_tracker.data.UserRepository;
 import com.launchcodeconnect.task_tracker.models.Task;
+import com.launchcodeconnect.task_tracker.models.User;
+import com.launchcodeconnect.task_tracker.models.dto.TaskDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +21,9 @@ public class TaskController {
     @Autowired
     private TaskRepository taskRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @GetMapping
     public ResponseEntity<List<Task>> getAllTasks() {
         List<Task> tasks = taskRepository.findAll();
@@ -30,8 +37,23 @@ public class TaskController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
-    public ResponseEntity<Task> createTask(@RequestBody Task task) {
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Task> createTask(@RequestBody TaskDTO taskDTO) {
+        Task task = new Task();
+        task.setTitle(taskDTO.getTitle());
+        task.setDescription(taskDTO.getDescription());
+        task.setDueDate(taskDTO.getDueDate());
+        task.setCompleted(taskDTO.isCompleted());
+
+        if (taskDTO.getAssigneeId() != 0) {
+            Optional<User> userOptional = userRepository.findById(taskDTO.getAssigneeId());
+            if (userOptional.isPresent()) {
+                task.setAssignee(userOptional.get());
+            } else {
+                return ResponseEntity.badRequest().build();
+            }
+        }
+
         Task newTask = taskRepository.save(task);
         return ResponseEntity.ok(newTask);
     }
@@ -49,6 +71,7 @@ public class TaskController {
         task.setDescription(updatedTask.getDescription());
         task.setDueDate(updatedTask.getDueDate());
         task.setCompleted(updatedTask.isCompleted());
+        task.setAssignee(updatedTask.getAssignee());
         return ResponseEntity.ok(taskRepository.save(task));
     }
 
