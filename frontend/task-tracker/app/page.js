@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { fetchClient } from './utils/fetchClient';
 import { useAuth } from './context/AuthContext';
+import AddTask from './forms/AddTask';
 
 export default function Dashboard() {
 	const { user } = useAuth();
@@ -10,6 +11,7 @@ export default function Dashboard() {
 	const [notifications, setNotifications] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
+	const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
 
 	useEffect(() => {
 		if (!user) return;
@@ -35,6 +37,10 @@ export default function Dashboard() {
 		fetchData();
 	}, [user]);
 
+  const handleTaskAdded = (newTask) => {
+		setTasks([...tasks, newTask]);
+  };
+
 	if (!user) {
     return <div className="flex justify-center items-center h-screen">Loading user...</div>;
   }
@@ -48,28 +54,54 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">Welcome {user.username}</h1>
-      <section className="mb-8">
-        <h2 className="text-2xl font-semibold mb-2">Tasks</h2>
-        <ul className="list-disc pl-5">
-          {tasks.map(task => (
-            <li key={task.id} className="mb-2">
-              {task.title} - <span className={task.completed ? 'text-green-500' : 'text-red-500'}>
-                {task.completed ? 'Completed' : 'Pending'}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </section>
-      <section>
-        <h2 className="text-2xl font-semibold mb-2">Notifications</h2>
-        <ul className="list-disc pl-5">
-          {notifications.map(notification => (
-            <li key={notification.id} className="mb-2">{notification.message}</li>
-          ))}
-        </ul>
-      </section>
-    </div>
+		<div className='container mx-auto p-4'>
+			<h1 className='text-3xl font-bold mb-4'>Welcome {user.username}</h1>
+			<button
+				onClick={() => setIsTaskModalOpen(true)}
+				className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4'
+			>
+				Add Task
+			</button>
+			<AddTask
+				isOpen={isTaskModalOpen}
+				onRequestClose={() => setIsTaskModalOpen(false)}
+				onTaskAdded={handleTaskAdded}
+			/>
+			<section className='mb-8'>
+				<h2 className='text-2xl font-semibold mb-2'>Tasks</h2>
+				<ul className='list-disc pl-5'>
+					{tasks.map((task) => (
+						<li
+							key={task.id}
+							className='mb-2'
+						>
+							{task.title} -{' '}
+							<span
+								className={
+									task.completed
+										? 'text-green-500'
+										: 'text-red-500'
+								}
+							>
+								{task.completed ? 'Completed' : 'Pending'}
+							</span>
+						</li>
+					))}
+				</ul>
+			</section>
+			<section>
+				<h2 className='text-2xl font-semibold mb-2'>Notifications</h2>
+				<ul className='list-disc pl-5'>
+					{notifications.map((notification) => (
+						<li
+							key={notification.id}
+							className='mb-2'
+						>
+							{notification.message}
+						</li>
+					))}
+				</ul>
+			</section>
+		</div>
   );
 };
