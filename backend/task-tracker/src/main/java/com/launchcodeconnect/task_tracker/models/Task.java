@@ -25,11 +25,12 @@ public class Task extends AbstractEntity{
     public Task() {
     }
 
-    public Task(String title, String description, Date dueDate, boolean completed) {
+    public Task(String title, String description, Date dueDate, boolean completed, User assignee) {
         this.title = title;
         this.description = description;
         this.dueDate = dueDate;
         this.completed = completed;
+        this.assignee = assignee;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
