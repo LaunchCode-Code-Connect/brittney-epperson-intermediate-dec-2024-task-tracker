@@ -23,6 +23,7 @@ This project is a task tracking application developed per requirements from the 
 ### Front-End
 
 - **User Interface (UI):**
+
   - **Authentication Pages:**
     - User login functionality.
     - Password reset functionality.
@@ -83,7 +84,7 @@ This project is a task tracking application developed per requirements from the 
 
 1. Clone the repository:
    ```
-   git clone https://github.com/ha-x-3/task-tracker.git
+   git clone https://github.com/LaunchCode-Code-Connect/brittney-epperson-intermediate-dec-2024-task-tracker.git
    cd task-tracker/frontend/task-tracker
    ```
 
@@ -100,7 +101,7 @@ This project is a task tracking application developed per requirements from the 
 
 1. Clone the repository (if not already done):
     ```
-    git clone https://github.com/ha-x-3/task-tracker.git
+    git clone https://github.com/LaunchCode-Code-Connect/brittney-epperson-intermediate-dec-2024-task-tracker.git
     cd task-tracker/backend/task-tracker
     ```
 
