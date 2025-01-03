@@ -84,7 +84,7 @@ export default function Dashboard() {
 			<h1 className='text-3xl font-bold mb-4'>Welcome {user.username}</h1>
 			<button
 				onClick={() => setIsTaskModalOpen(true)}
-				className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4'
+				className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline mb-4'
 			>
 				Add Task
 			</button>
@@ -94,7 +94,7 @@ export default function Dashboard() {
 				onTaskAdded={handleTaskAdded}
 			/>
 			<section className='mb-8'>
-				<h2 className='text-2xl font-semibold mb-2'>Tasks</h2>
+				<h2 className='text-2xl font-semibold mb-2 text-green-600'>Tasks</h2>
 				<ul className='space-y-4'>
 					{tasks.map((task) => (
 						<li
@@ -102,7 +102,7 @@ export default function Dashboard() {
 							className='p-4 bg-white rounded-lg shadow-md flex justify-between items-center'
 						>
 							<div>
-								<h3 className='text-xl font-bold'>
+								<h3 className='text-xl font-bold text-purple-700'>
 									{task.title}
 								</h3>
 								<p className='text-gray-600'>
