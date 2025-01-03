@@ -13,6 +13,6 @@ public class TaskDTO {
     private String description;
     private Date dueDate;
     private boolean completed;
-    private int assigneeId;
+    private Integer assigneeId;
 
 }

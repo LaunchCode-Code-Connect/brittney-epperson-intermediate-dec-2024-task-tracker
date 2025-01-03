@@ -11,7 +11,7 @@ export default function AddTask({ isOpen, onRequestClose, onTaskAdded }) {
 		title: '',
 		description: '',
 		dueDate: '',
-		assigneeId: '',
+		assigneeId: null,
 	});
 	const [users, setUsers] = useState([]);
 	const [error, setError] = useState(null);
@@ -42,29 +42,13 @@ export default function AddTask({ isOpen, onRequestClose, onTaskAdded }) {
 		e.preventDefault();
 		setIsSubmitting(true);
 		try {
-			const newTask = {
-				title: formData.title,
-				description: formData.description,
-				dueDate: formData.dueDate,
-				completed: false,
-				assignee: parseInt(formData.assigneeId, 10),
-			};
-			console.log('Submitting Task:', newTask);
 			const response = await fetchClient('/tasks', {
 				method: 'POST',
-				body: JSON.stringify(newTask),
+				body: JSON.stringify(formData),
 			});
-			console.log('Task Added Response:', response);
 			onTaskAdded(response);
-			setFormData({
-				title: '',
-				description: '',
-				dueDate: '',
-				assigneeId: '',
-			});
 			onRequestClose();
 		} catch (error) {
-			console.error('Error Adding Task:', error);
 			setError(error.message);
 		} finally {
 			setIsSubmitting(false);
@@ -89,8 +73,8 @@ export default function AddTask({ isOpen, onRequestClose, onTaskAdded }) {
 				>
 					<div>
 						<label
-							className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
 							htmlFor='title'
+							className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
 						>
 							Title
 						</label>
@@ -106,8 +90,8 @@ export default function AddTask({ isOpen, onRequestClose, onTaskAdded }) {
 					</div>
 					<div>
 						<label
-							className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
 							htmlFor='description'
+							className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
 						>
 							Description
 						</label>
@@ -122,8 +106,8 @@ export default function AddTask({ isOpen, onRequestClose, onTaskAdded }) {
 					</div>
 					<div>
 						<label
-							className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
 							htmlFor='dueDate'
+							className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
 						>
 							Due Date
 						</label>
@@ -139,20 +123,20 @@ export default function AddTask({ isOpen, onRequestClose, onTaskAdded }) {
 					</div>
 					<div>
 						<label
+							htmlFor='assigneeId'
 							className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
-							htmlFor='assignee'
 						>
-							Assign To
+							Assignee
 						</label>
 						<select
-							id='assignee'
+							id='assigneeId'
 							name='assigneeId'
-							value={formData.assigneeId}
+							value={formData.assigneeId || ''}
 							onChange={handleChange}
 							className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
 							required
 						>
-							<option value=''>Select a user</option>
+							<option value=''>Select Assignee</option>
 							{users.map((user) => (
 								<option
 									key={user.id}

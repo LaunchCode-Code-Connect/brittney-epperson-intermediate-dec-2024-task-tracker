@@ -33,8 +33,8 @@ public class Task extends AbstractEntity{
         this.assignee = assignee;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "assignee_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "assignee_id", nullable = false)
     @JsonBackReference
     private User assignee;
 

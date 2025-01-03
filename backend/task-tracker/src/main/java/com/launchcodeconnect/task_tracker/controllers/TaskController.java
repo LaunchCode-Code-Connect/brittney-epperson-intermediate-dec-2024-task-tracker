@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -25,9 +26,12 @@ public class TaskController {
     private UserRepository userRepository;
 
     @GetMapping
-    public ResponseEntity<List<Task>> getAllTasks() {
+    public ResponseEntity<List<TaskDTO>> getAllTasks() {
         List<Task> tasks = taskRepository.findAll();
-        return ResponseEntity.ok(tasks);
+        List<TaskDTO> taskDTOs = tasks.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(taskDTOs);
     }
 
     @GetMapping("/{id}")
@@ -37,25 +41,36 @@ public class TaskController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Task> createTask(@RequestBody TaskDTO taskDTO) {
-        Task task = new Task();
-        task.setTitle(taskDTO.getTitle());
-        task.setDescription(taskDTO.getDescription());
-        task.setDueDate(taskDTO.getDueDate());
-        task.setCompleted(taskDTO.isCompleted());
+    @PostMapping
+    public ResponseEntity<TaskDTO> createTask(@RequestBody TaskDTO taskDTO) {
+        Task task = convertToEntity(taskDTO);
+        Task savedTask = taskRepository.save(task);
+        return ResponseEntity.ok(convertToDTO(savedTask));
+    }
 
-        if (taskDTO.getAssigneeId() != 0) {
-            Optional<User> userOptional = userRepository.findById(taskDTO.getAssigneeId());
-            if (userOptional.isPresent()) {
-                task.setAssignee(userOptional.get());
-            } else {
-                return ResponseEntity.badRequest().build();
-            }
+    private TaskDTO convertToDTO(Task task) {
+        TaskDTO dto = new TaskDTO();
+        dto.setTitle(task.getTitle());
+        dto.setDescription(task.getDescription());
+        dto.setDueDate(task.getDueDate());
+        dto.setCompleted(task.isCompleted());
+        dto.setAssigneeId(task.getAssignee() != null ? task.getAssignee().getId() : null);
+        return dto;
+    }
+
+    private Task convertToEntity(TaskDTO dto) {
+        Task task = new Task();
+        task.setTitle(dto.getTitle());
+        task.setDescription(dto.getDescription());
+        task.setDueDate(dto.getDueDate());
+        task.setCompleted(dto.isCompleted());
+
+        if (dto.getAssigneeId() != null) {
+            Optional<User> assignee = userRepository.findById(dto.getAssigneeId());
+            assignee.ifPresent(task::setAssignee);
         }
 
-        Task newTask = taskRepository.save(task);
-        return ResponseEntity.ok(newTask);
+        return task;
     }
 
     @PutMapping("/{id}")
