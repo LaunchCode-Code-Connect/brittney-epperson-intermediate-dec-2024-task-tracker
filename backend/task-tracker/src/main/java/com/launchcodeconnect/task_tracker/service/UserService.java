@@ -2,7 +2,6 @@ package com.launchcodeconnect.task_tracker.service;
 
 import com.launchcodeconnect.task_tracker.data.UserRepository;
 import com.launchcodeconnect.task_tracker.models.User;
-import com.launchcodeconnect.task_tracker.models.dto.LoginFormDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
