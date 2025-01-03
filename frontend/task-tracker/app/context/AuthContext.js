@@ -56,8 +56,11 @@ export const AuthProvider = ({ children }) => {
 			const decodedToken = jwtDecode(token);
 			const username = decodedToken.sub;
 
-			setUser({ username });
-			return { success: true, username };
+			setUser({
+				id: decodedToken.userId,
+				username: decodedToken.username,
+			});
+			return { success: true, username: username };
 		} catch (error) {
 			setError(error.message);
 			return { success: false, error: error.message };
