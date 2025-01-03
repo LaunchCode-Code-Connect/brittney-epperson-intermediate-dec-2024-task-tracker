@@ -57,7 +57,7 @@ public class User extends AbstractEntity implements UserDetails {
     @Column(name = "token_expiration")
     private LocalDateTime tokenExpiration;
 
-    @OneToMany(mappedBy = "assignee", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "assignee", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Task> tasks;
 
