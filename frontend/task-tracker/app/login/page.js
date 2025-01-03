@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
 
 export default function Page() {
@@ -11,6 +12,7 @@ export default function Page() {
 	const [responseMessage, setResponseMessage] = useState('');
 	const [loading, setLoading] = useState(false);
     const { user, login, error} = useAuth();
+    const router = useRouter();
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -28,6 +30,7 @@ export default function Page() {
                 setResponseMessage(
                     `Login successful! Welcome, ${user.username || 'User'}!`
                 );
+				router.push('/');
             }
 		} catch (error) {
 			setResponseMessage('An error occurred: ' + error.message);
