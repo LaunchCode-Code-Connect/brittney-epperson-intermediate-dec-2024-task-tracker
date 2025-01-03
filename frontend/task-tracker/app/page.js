@@ -19,9 +19,7 @@ export default function Dashboard() {
 		const fetchData = async () => {
 			try {
 				setLoading(true);
-				const tasksData = await fetchClient(
-					`/users/${user.id}/tasks`
-				);
+				const tasksData = await fetchClient(`/users/${user.id}/tasks`);
 				const notificationsData = await fetchClient(
 					`/users/${user.id}/notifications`
 				);
@@ -37,23 +35,51 @@ export default function Dashboard() {
 		fetchData();
 	}, [user]);
 
-  const handleTaskAdded = (newTask) => {
+	const handleTaskAdded = (newTask) => {
 		setTasks((prevTasks) => [...prevTasks, newTask]);
-  };
+	};
+
+	const handleTaskCompletion = async (taskId, completed) => {
+		try {
+			await fetchClient(`/tasks/${taskId}`, {
+				method: 'PATCH',
+				body: JSON.stringify({ completed }),
+			});
+			setTasks((prevTasks) =>
+				prevTasks.map((task) =>
+					task.id === taskId ? { ...task, completed } : task
+				)
+			);
+		} catch (error) {
+			setError(error.message);
+		}
+	};
 
 	if (!user) {
-    return <div className="flex justify-center items-center h-screen">Loading user...</div>;
-  }
+		return (
+			<div className='flex justify-center items-center h-screen'>
+				Loading user...
+			</div>
+		);
+	}
 
-  if (loading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
-  }
+	if (loading) {
+		return (
+			<div className='flex justify-center items-center h-screen'>
+				Loading...
+			</div>
+		);
+	}
 
-  if (error) {
-    return <div className="flex justify-center items-center h-screen">Error: {error}</div>;
-  }
+	if (error) {
+		return (
+			<div className='flex justify-center items-center h-screen'>
+				Error: {error}
+			</div>
+		);
+	}
 
-  return (
+	return (
 		<div className='container mx-auto p-4'>
 			<h1 className='text-3xl font-bold mb-4'>Welcome {user.username}</h1>
 			<button
@@ -69,33 +95,59 @@ export default function Dashboard() {
 			/>
 			<section className='mb-8'>
 				<h2 className='text-2xl font-semibold mb-2'>Tasks</h2>
-				<ul className='list-disc pl-5'>
+				<ul className='space-y-4'>
 					{tasks.map((task) => (
 						<li
 							key={task.id}
-							className='mb-2'
+							className='p-4 bg-white rounded-lg shadow-md flex justify-between items-center'
 						>
-							{task.title} -{' '}
-							<span
-								className={
-									task.completed
-										? 'text-green-500'
-										: 'text-red-500'
-								}
-							>
-								{task.completed ? 'Completed' : 'Pending'}
-							</span>
+							<div>
+								<h3 className='text-xl font-bold'>
+									{task.title}
+								</h3>
+								<p className='text-gray-600'>
+									{task.description}
+								</p>
+								<p className='text-gray-500'>
+									Due:{' '}
+									{new Date(
+										task.dueDate
+									).toLocaleDateString()}
+								</p>
+							</div>
+							<div className='flex items-center'>
+								<input
+									type='checkbox'
+									checked={task.completed}
+									onChange={(e) =>
+										handleTaskCompletion(
+											task.id,
+											e.target.checked
+										)
+									}
+									className='mr-2'
+								/>
+								<span
+									className={
+										task.completed
+											? 'text-green-500'
+											: 'text-red-500'
+									}
+								>
+									{task.completed ? 'Completed' : 'Pending'}
+								</span>
+							</div>
 						</li>
 					))}
 				</ul>
 			</section>
 			<section>
 				<h2 className='text-2xl font-semibold mb-2'>Notifications</h2>
-				<ul className='list-disc pl-5'>
+				<ul className='space-y-4'>
 					{notifications.map((notification) => (
 						<li
 							key={notification.id}
-							className='mb-2'
+							className='p-4 bg-white rounded-lg shadow-md'
 						>
 							{notification.message}
 						</li>
@@ -103,5 +155,5 @@ export default function Dashboard() {
 				</ul>
 			</section>
 		</div>
-  );
-};
+	);
+}

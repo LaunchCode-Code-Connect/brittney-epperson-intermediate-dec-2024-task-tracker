@@ -6,7 +6,6 @@ import com.launchcodeconnect.task_tracker.models.Task;
 import com.launchcodeconnect.task_tracker.models.User;
 import com.launchcodeconnect.task_tracker.models.dto.TaskDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -71,6 +70,19 @@ public class TaskController {
         }
 
         return task;
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Task> updateTaskCompletion(@PathVariable("id") int id, @RequestBody TaskDTO updatedTaskDTO) {
+        Optional<Task> taskOpt = taskRepository.findById(id);
+
+        if (taskOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Task task = taskOpt.get();
+        task.setCompleted(updatedTaskDTO.isCompleted());
+        return ResponseEntity.ok(taskRepository.save(task));
     }
 
     @PutMapping("/{id}")
