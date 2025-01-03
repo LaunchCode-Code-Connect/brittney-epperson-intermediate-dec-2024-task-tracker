@@ -38,7 +38,7 @@ export default function Dashboard() {
 	}, [user]);
 
   const handleTaskAdded = (newTask) => {
-		setTasks([...tasks, newTask]);
+		setTasks((prevTasks) => [...prevTasks, newTask]);
   };
 
 	if (!user) {
