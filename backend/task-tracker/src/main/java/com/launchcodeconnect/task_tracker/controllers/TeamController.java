@@ -1,7 +1,9 @@
 package com.launchcodeconnect.task_tracker.controllers;
 
 import com.launchcodeconnect.task_tracker.data.TeamRepository;
+import com.launchcodeconnect.task_tracker.data.UserRepository;
 import com.launchcodeconnect.task_tracker.models.Team;
+import com.launchcodeconnect.task_tracker.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,9 @@ public class TeamController {
 
     @Autowired
     private TeamRepository teamRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @GetMapping
     public ResponseEntity<List<Team>> getAllTeams() {
@@ -58,4 +63,18 @@ public class TeamController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    @PostMapping("/{id}/users")
+    public ResponseEntity<Team> assignUsersToTeam(@PathVariable("id") int id, @RequestBody List<User> users) {
+        Optional<Team> teamOpt = teamRepository.findById(id);
+
+        if (teamOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Team team = teamOpt.get();
+        team.setUsers(users);
+        return ResponseEntity.ok(teamRepository.save(team));
+    }
+
 }
