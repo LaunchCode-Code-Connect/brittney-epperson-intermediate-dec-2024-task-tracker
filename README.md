@@ -114,8 +114,10 @@ This project is a task tracking application developed per requirements from the 
     ./gradlew bootRun
     ```
 ## Usage
-Open your browser and navigate to http://localhost:3000 to access the front-end application.
-Log in with your credentials to access the dashboard and manage tasks.
+Open your browser and navigate to http://localhost:3000/register to access the front-end application.
+Register your user credentials and navigate to http://localhost:3000 to access the dashboard and manage tasks.
+
+To view Swagger UI documentation, navigate to http://localhost:8080/swagger-ui/index.html.
 
 ## Next Steps
 The following features and enhancements are planned:
